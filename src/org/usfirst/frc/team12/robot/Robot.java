@@ -44,7 +44,8 @@ public class Robot extends IterativeRobot {
 	private SpeedControllerGroup baseLeft,baseRight,armGrp;
 	private DifferentialDrive base;
 	private DigitalInput reseter;
-	public static Compressor comp;
+	private Compressor comp;
+	private Solenoid sol;
 	
 	
 	//Motor Fix Constant(Not Used)
@@ -55,7 +56,7 @@ public class Robot extends IterativeRobot {
 	private final double firstDrvSpd = 0.5;
 	private final double firstDrvRot = 0.0;
 	private final double armDownTime = 0.5;
-	private static final int comp_id = 48;
+	private final int comp_id = 48;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -85,7 +86,7 @@ public class Robot extends IterativeRobot {
 		reseter = new DigitalInput(7);
 		timer = new Timer();
 		comp = new Compressor(comp_id);
-		comp.setClosedLoopControl(false);
+		sol = new Solenoid(0);
 
 	}
 
@@ -145,12 +146,11 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during operator control.
 	 */
-	private double speedct = 0.4 ;
-	private double rotate = 0.0;
+	
 	
 	@Override
 	public void teleopPeriodic() {
-		System.out.printf("Stick (%f, %f ,%f ,%d)\n", stick.getX(), stick.getY(),stick.getZ(),motorEnc.get());
+		/*System.out.printf("Stick (%f, %f ,%f ,%d)\n", stick.getX(), stick.getY(),stick.getZ(),motorEnc.get());
 		//armGrp.set(stick.getZ()*(-0.5));
 
 		rotate = new RangeMapper(-0.35, 0.35).mapRange(stick.getX());		
@@ -163,7 +163,7 @@ public class Robot extends IterativeRobot {
 			System.out.printf("RUN => Speed : %f , Rotate : %f \n", speedct,rotate);
 			base.arcadeDrive(speedct, rotate, false);
 			
-		}
+		}*/	
 
 		/*if(Math.abs(stick.getZ()) > 0.1) {
 			armGrp.set(stick.getZ()*(-0.4));
@@ -186,20 +186,18 @@ public class Robot extends IterativeRobot {
 			catcher.set(ControlMode.PercentOutput, 0.0);
 		}*/
   	}
+	private double speedct;
+	private double rotate;
 	
 	/**
 	 * This function is called periodically during test mode.
 	 */
 	@Override
 	public void testPeriodic() {
-		//System.out.printf("%B %B\n",comp.getCompressorNotConnectedFault(),comp.getPressureSwitchValue());
-		
-		if(stick.getRawButton(2)) {
-			comp.start();
+		rotate = new RangeMapper(-0.5,0.5).mapRange(stick.getX());
+		speedct = new RangeMapper(0.5,-0.5).mapRange(stick.getY()) ;
+		if(stick.getY()>0.1||stick.getX()>0.1) {
+			base.tankDrive(speedct+rotate, speedct-rotate);
 		}
-		else {
-			comp.stop();
-		}
-		
-	}
+	}	
 }
