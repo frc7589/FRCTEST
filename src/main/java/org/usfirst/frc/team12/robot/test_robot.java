@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the build.properties file in the
  * project.
  */
-public class test_robot extends IterativeRobot {
-	private XboxController stick;
+public class test_robot extends TimedRobot {
+	private Joystick stick;
 	
 	private WPI_VictorSPX baseLeft1;
 	private WPI_VictorSPX baseLeft2;
@@ -37,24 +37,18 @@ public class test_robot extends IterativeRobot {
 	
 	private SpeedControllerGroup baseLeft,baseRight;
 	private DifferentialDrive base;
-	
-	//Motor Fix Constant(Not Used)
-	private final int catcherSpot = 1;
-			
-		// Autonomous Constant
-	private final double firstStop = 3.0;
-	private final double firstDrvSpd = 0.5;
-	private final double firstDrvRot = 0.0;
-	private final double armDownTime = 0.5;
-	
+
+	private Servo svo;
+	Compressor comp;
+	DoubleSolenoid sol;
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		stick = new XboxController(0);
-		
+		stick = new Joystick(0);
+		/*
 		//motor = new VictorSPX(5);
 		baseLeft1 =  new WPI_VictorSPX(0);
 		baseLeft2 =  new WPI_VictorSPX(2);
@@ -65,7 +59,14 @@ public class test_robot extends IterativeRobot {
 		baseLeft = new SpeedControllerGroup(baseLeft1, baseLeft2);
 		base = new DifferentialDrive(baseLeft, baseRight);
 		
-		timer = new Timer();
+		timer = new Timer();*/
+		svo = new Servo(9);
+
+		comp = new Compressor(48);
+
+		//boolean pressureSwitch = comp.getPressureSwitchValue();
+		//double current = comp.getCompressorCurrent();
+		sol = new DoubleSolenoid(48, 6, 7);
 	}
 
 	/**
@@ -124,8 +125,6 @@ public class test_robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during operator control.
 	 */
-	private double left = 0.0 ;
-	private double right = 0.0;
 	
 	@Override
 	public void teleopPeriodic() {
@@ -164,7 +163,9 @@ public class test_robot extends IterativeRobot {
 		else {
 			catcher.set(ControlMode.PercentOutput, 0.0);
 		}*/
-		
+
+
+		/*
 		left = new RangeMapper(0.5,-0.5).mapRange(stick.getY(Hand.kLeft));		
 
 		right = new RangeMapper(0.5,-0.5).mapRange(stick.getY(Hand.kRight)) ;
@@ -172,15 +173,20 @@ public class test_robot extends IterativeRobot {
 		if(Math.abs(stick.getY(Hand.kLeft)) >= 0.1 || Math.abs(stick.getY(Hand.kLeft)) >= 0.1) {
 			base.tankDrive(left, right);
 		}
-		
-  	}
+		*/
+	  }
+	  
+	  public void testInit() {
+		comp.setClosedLoopControl(true);
+		comp.start();
+	  }
 	
 	/**
 	 * This function is called periodically during test mode.
 	 */
 	@Override
 	public void testPeriodic() {
-		if(stick.getRawButton(2)) {
+		/*if(stick.getRawButton(2)) {
 			base.tankDrive(0.0, 0.5);
 		}
 		else {
@@ -191,6 +197,25 @@ public class test_robot extends IterativeRobot {
 		}
 		else {
 			base.tankDrive(0.0, 0.0);
+		}*/
+
+		//svo.set(new RangeMapper(0, 1).mapRange(stick.getThrottle()));	
+		//System.out.printf("Yee:%f\n", new RangeMapper(0, 1).mapRange(stick.getThrottle()));
+
+		boolean enabled = comp.enabled();
+		boolean pressureSwitch = comp.getPressureSwitchValue();
+		System.out.printf("compressor %s, pressureSW %s\n", enabled?"On":"Off", pressureSwitch?"On":"Off");
+		//double current = comp.getCompressorCurrent();
+
+
+		//exampleDouble.set(DoubleSolenoid.Value.kOff);
+		//exampleDouble.set(DoubleSolenoid.Value.kForward);
+		//exampleDouble.set(DoubleSolenoid.Value.kReverse);
+		if (stick.getRawButton(2)) {
+			sol.set(DoubleSolenoid.Value.kForward);
+		}
+		if (stick.getRawButton(4)) {
+			sol.set(DoubleSolenoid.Value.kReverse);
 		}
 	}
 }
