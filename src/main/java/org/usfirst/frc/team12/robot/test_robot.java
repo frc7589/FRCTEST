@@ -7,7 +7,7 @@
 
 package org.usfirst.frc.team12.robot;
 
-import org.usfirst.frc.team12.util.RangeMapper;
+import org.usfirst.frc.team12.util.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.wpilibj.CameraServer;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -27,27 +29,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class test_robot extends TimedRobot {
-	private Joystick stick;
+	private IHidRobot2 stick;	// XboxControllerTuned or JoystickTuned
 	
 	private WPI_VictorSPX baseLeft1;
-	private WPI_VictorSPX baseLeft2;
+	//private WPI_VictorSPX baseLeft2;
 	private WPI_VictorSPX baseRight1;
-	private WPI_VictorSPX baseRight2;
+	//private WPI_VictorSPX baseRight2;
+	//private RangeMapper speedRange, rotateRange;
 	private Timer timer;
 	
 	private SpeedControllerGroup baseLeft,baseRight;
 	private DifferentialDrive base;
 
-	private Servo svo;
-	Compressor comp;
-	DoubleSolenoid sol;
+	//private Servo svo;
+
+	//private Servo testline;
+	private WPI_VictorSPX hatchmotor;
+	//private WPI_VictorSPX redline1;
+	//private WPI_VictorSPX redline2;
+	//private WPI_VictorSPX testredline;
+	private WPI_VictorSPX cargo;
+	//Compressor comp, comp2;
+	//DoubleSolenoid sol1, sol2;
+
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		stick = new Joystick(0);
+		//stick = new XboxControllerTuned(0);
+		stick = new JoystickTuned(0);
 		/*
 		//motor = new VictorSPX(5);
 		baseLeft1 =  new WPI_VictorSPX(0);
@@ -58,15 +71,32 @@ public class test_robot extends TimedRobot {
 		baseRight = new SpeedControllerGroup(baseRight1, baseRight2);
 		baseLeft = new SpeedControllerGroup(baseLeft1, baseLeft2);
 		base = new DifferentialDrive(baseLeft, baseRight);
+
 		
 		timer = new Timer();*/
-		svo = new Servo(9);
+		baseLeft1 = new WPI_VictorSPX(0);
+		baseRight1 = new WPI_VictorSPX(1);
+		base = new DifferentialDrive(baseLeft1, baseRight1);
 
-		comp = new Compressor(48);
+		//svo = new Servo(9);
+
+		//comp = new Compressor(48);
+		//comp2 = new Compressor(49);
 
 		//boolean pressureSwitch = comp.getPressureSwitchValue();
 		//double current = comp.getCompressorCurrent();
-		sol = new DoubleSolenoid(48, 6, 7);
+		//sol1 = new DoubleSolenoid(48, 6, 7);
+		//sol2 = new DoubleSolenoid(49, 4, 5);
+		
+		hatchmotor = new WPI_VictorSPX(3);
+		//redline1 = new WPI_VictorSPX(1);
+		//redline2 = new WPI_VictorSPX(2);
+		//testredline = new WPI_VictorSPX(5);
+		cargo = new WPI_VictorSPX(5);
+		//testline = new Servo(5);
+
+		CameraServer.getInstance().startAutomaticCapture();
+		
 	}
 
 	/**
@@ -128,7 +158,8 @@ public class test_robot extends TimedRobot {
 	
 	@Override
 	public void teleopPeriodic() {
-		/*System.out.printf("Stick (%f, %f ,%f ,%d)\n", stick.getX(), stick.getY(),stick.getZ(),motorEnc.get());
+		/*
+		System.out.printf("Stick (%f, %f ,%f ,%d)\n", stick.getX(), stick.getY(),stick.getZ(),motorEnc.get());
 		//armGrp.set(stick.getZ()*(-0.5));
 
 		rotate = new RangeMapper(-0.35, 0.35).mapRange(stick.getX());		
@@ -165,20 +196,69 @@ public class test_robot extends TimedRobot {
 		}*/
 
 
-		/*
-		left = new RangeMapper(0.5,-0.5).mapRange(stick.getY(Hand.kLeft));		
-
-		right = new RangeMapper(0.5,-0.5).mapRange(stick.getY(Hand.kRight)) ;
 		
-		if(Math.abs(stick.getY(Hand.kLeft)) >= 0.1 || Math.abs(stick.getY(Hand.kLeft)) >= 0.1) {
+		//double left = new RangeMapper(0.9,-0.9).mapRange(stick.getY(Hand.kLeft));		
+
+		//double right = new RangeMapper(0.9,-0.9).mapRange(stick.getY(Hand.kRight)) ;
+		
+		/*
+		double left = -stick.getY(Hand.kLeft);
+		double right = -stick.getY(Hand.kRight);
+		if(Math.abs(stick.getY(Hand.kLeft)) >= 0.1 || Math.abs(stick.getY(Hand.kRight)) >= 0.1) {
 			base.tankDrive(left, right);
 		}
 		*/
-	  }
+		base.tankDrive(stick.lWheel(), stick.rWheel(), false);
+
+		//testredline.set(ControlMode.PercentOutput , right*0.5);
+
+		//XboxController stick2 = stick;
+		//RangeMapper tmp = new RangeMapper(0.0, 1.0);
+		//testline.set(tmp.mapRange(stick.getY(Hand.kRight)));
+		//System.out.printf("\n\n\n\n\n%f\n%f\n\n\n\n\n", stick.getY(Hand.kRight), tmp.mapRange(stick.getY(Hand.kRight)));
+		/*
+		double value2 = (stick.getTriggerAxis(Hand.kLeft))*0.3;       //hatch(snowblower)
+		double value1 = -(stick.getTriggerAxis(Hand.kRight))*0.3;       //hatch(snowblower)
+		if(value2>0.1){
+		hatchmotor.set (ControlMode.PercentOutput , value2);
+		//System.out.println(value2);
+		}
+		else if(value1<-0.1){
+		hatchmotor.set (ControlMode.PercentOutput , value1);
+		//System.out.println(value1);
+		}
+		else{
+			hatchmotor.set(0);
+		}
+		System.out.println(stick.getTriggerAxis(Hand.kLeft));
+		System.out.println(stick.getTriggerAxis(Hand.kRight));
+		*/
+		hatchmotor.set(ControlMode.PercentOutput, stick.panelArm());
+		
+		/*
+		boolean cargoP = stick.getBackButton();
+		boolean cargoM = stick.getBackButtonReleased();
+		if(cargoP){
+			cargo.set(ControlMode.PercentOutput,0.1);
+		}
+		else if(cargoM){
+			cargo.set(ControlMode.PercentOutput, -0.1);
+		}
+		else{
+			cargo.set(ControlMode.PercentOutput, 0.0);
+		}
+		*/
+		cargo.set(ControlMode.PercentOutput, stick.cargoSlope());
+		System.out.println(stick.cargoSlope());
+	}
 	  
 	  public void testInit() {
-		comp.setClosedLoopControl(true);
-		comp.start();
+		//comp.setClosedLoopControl(true);
+		//comp.start();
+		//comp2.start();
+
+		//rotateRange = new RangeMapper(-1.0, 1.0);
+		//speedRange = new RangeMapper(1.0,-1.0);
 	  }
 	
 	/**
@@ -198,24 +278,40 @@ public class test_robot extends TimedRobot {
 		else {
 			base.tankDrive(0.0, 0.0);
 		}*/
+		/*double rotate = rotateRange.mapRange(stick.getX());		
+		//Set forward speed while stick push 
+		double speedct = speedRange.mapRange(stick.getY()) ;
+		
+		if (Math.abs(stick.getX()) > 0.1 || Math.abs(stick.getY()) > 0.1) {
+			
+			//Calculate move speed and move
+			System.out.printf("RUN => Speed : %f , Rotate : %f \n", speedct,rotate);
+			base.arcadeDrive(speedct, rotate, false);
+			
+		}*/
 
 		//svo.set(new RangeMapper(0, 1).mapRange(stick.getThrottle()));	
 		//System.out.printf("Yee:%f\n", new RangeMapper(0, 1).mapRange(stick.getThrottle()));
 
-		boolean enabled = comp.enabled();
-		boolean pressureSwitch = comp.getPressureSwitchValue();
-		System.out.printf("compressor %s, pressureSW %s\n", enabled?"On":"Off", pressureSwitch?"On":"Off");
+		//boolean enabled = comp.enabled();
+		//boolean pressureSwitch = comp.getPressureSwitchValue();
 		//double current = comp.getCompressorCurrent();
-
+		//System.out.printf("compressor %s, pressureSW %s\n", enabled?"On":"Off", pressureSwitch?"On":"Off");
+	
 
 		//exampleDouble.set(DoubleSolenoid.Value.kOff);
 		//exampleDouble.set(DoubleSolenoid.Value.kForward);
 		//exampleDouble.set(DoubleSolenoid.Value.kReverse);
+		/*
 		if (stick.getRawButton(2)) {
-			sol.set(DoubleSolenoid.Value.kForward);
+			sol1.set(DoubleSolenoid.Value.kForward);
+			sol2.set(DoubleSolenoid.Value.kForward);
 		}
 		if (stick.getRawButton(4)) {
-			sol.set(DoubleSolenoid.Value.kReverse);
+			sol1.set(DoubleSolenoid.Value.kReverse);
+			sol2.set(DoubleSolenoid.Value.kReverse);
+
 		}
-	}
+		*/
+			}
 }
