@@ -5,4 +5,5 @@ public interface IHidRobot2 {
     public double rWheel();
     public double panelArm();
     public double cargoSlope();
+    public SpeedMode changeSpeed();
 }

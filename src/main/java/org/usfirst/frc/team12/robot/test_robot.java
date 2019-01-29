@@ -19,8 +19,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import edu.wpi.first.wpilibj.CameraServer;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -34,6 +32,9 @@ public class test_robot extends TimedRobot {
 	private WPI_VictorSPX baseLeft1;
 	//private WPI_VictorSPX baseLeft2;
 	private WPI_VictorSPX baseRight1;
+
+	private WPI_VictorSPX armr;
+	private WPI_VictorSPX arml;
 	//private WPI_VictorSPX baseRight2;
 	//private RangeMapper speedRange, rotateRange;
 	private Timer timer;
@@ -51,6 +52,7 @@ public class test_robot extends TimedRobot {
 	private WPI_VictorSPX cargo;
 	//Compressor comp, comp2;
 	//DoubleSolenoid sol1, sol2;
+	private SpeedMode spmd;
 
 	
 	/**
@@ -59,8 +61,8 @@ public class test_robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//stick = new XboxControllerTuned(0);
-		stick = new JoystickTuned(0);
+		stick = new XboxControllerTuned(0);
+		//stick = new JoystickTuned(0);
 		/*
 		//motor = new VictorSPX(5);
 		baseLeft1 =  new WPI_VictorSPX(0);
@@ -74,9 +76,13 @@ public class test_robot extends TimedRobot {
 
 		
 		timer = new Timer();*/
+		
+		armr = new WPI_VictorSPX(0);
+		arml = new WPI_VictorSPX(2);
 		baseLeft1 = new WPI_VictorSPX(0);
-		baseRight1 = new WPI_VictorSPX(1);
+		baseRight1 = new WPI_VictorSPX(5);
 		base = new DifferentialDrive(baseLeft1, baseRight1);
+
 
 		//svo = new Servo(9);
 
@@ -92,11 +98,11 @@ public class test_robot extends TimedRobot {
 		//redline1 = new WPI_VictorSPX(1);
 		//redline2 = new WPI_VictorSPX(2);
 		//testredline = new WPI_VictorSPX(5);
-		cargo = new WPI_VictorSPX(5);
+		cargo = new WPI_VictorSPX(2);
 		//testline = new Servo(5);
 
-		CameraServer.getInstance().startAutomaticCapture();
-		
+		//CameraServer.getInstance().startAutomaticCapture();
+		spmd = SpeedMode.MED;
 	}
 
 	/**
@@ -208,6 +214,7 @@ public class test_robot extends TimedRobot {
 			base.tankDrive(left, right);
 		}
 		*/
+		spmd = stick.changeSpeed();
 		base.tankDrive(stick.lWheel(), stick.rWheel(), false);
 
 		//testredline.set(ControlMode.PercentOutput , right*0.5);
@@ -249,7 +256,7 @@ public class test_robot extends TimedRobot {
 		}
 		*/
 		cargo.set(ControlMode.PercentOutput, stick.cargoSlope());
-		System.out.println(stick.cargoSlope());
+		//System.out.println(stick.cargoSlope());
 	}
 	  
 	  public void testInit() {
@@ -313,5 +320,17 @@ public class test_robot extends TimedRobot {
 
 		}
 		*/
-			}
+		/* if(stick.getXButton()){
+			armr.set(ControlMode.PercentOutput,1);
+			arml.set(ControlMode.PercentOutput,-1);
+		}
+		else if(stick.getYButton()){
+			armr.set(ControlMode.PercentOutput,-1);
+			arml.set(ControlMode.PercentOutput,1);
+		}
+		else {
+			armr.set(ControlMode.PercentOutput,0);
+			arml.set(ControlMode.PercentOutput,0);
+		} */
+	}
 }

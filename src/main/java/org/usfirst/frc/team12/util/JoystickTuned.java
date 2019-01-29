@@ -14,6 +14,11 @@ public class JoystickTuned extends Joystick implements IHidRobot2 {
         System.out.print("\n");
     }
 
+    public SpeedMode changeSpeed(){
+        //method not supported
+        return SpeedMode.MED;
+    }
+
     public double lWheel() {
         double y = this.getY();
         double x = this.getX();
