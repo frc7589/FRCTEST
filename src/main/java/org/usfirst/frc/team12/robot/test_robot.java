@@ -11,10 +11,13 @@ import org.usfirst.frc.team12.util.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -35,7 +38,9 @@ public class test_robot extends TimedRobot {
 	private WPI_VictorSPX cargo;
 	private SpeedMode spmd;//Speed record for SmartDashBoard
 
-	
+	private DigitalInput micro;
+
+	//private AHRS gyro;
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -51,11 +56,27 @@ public class test_robot extends TimedRobot {
 		hatchmotor = new WPI_VictorSPX(3);
 		cargo = new WPI_VictorSPX(2);
 		spmd = SpeedMode.FAST;
+
+		micro = new DigitalInput(9);
+
+		/*
+		try{//Gyro
+			gyro = new AHRS(SerialPort.Port.kMXP);
+		}
+		catch(RuntimeException e){
+			DriverStation.reportError("Error instantiating navX MXP:  " + e.getMessage(), true);
+		}*/
 	}
 
 	@Override
 	public void robotPeriodic() {
+		spmd = stick.changeSpeed();
 		SmartDashboard.putString("SpeedMode", spmd.toString());
+		SmartDashboard.putBoolean("Micro", micro.get());
+		/*if(gyro != null){
+			SmartDashboard.putBoolean("GyroConnection", gyro.isConnected());
+			SmartDashboard.putData("Gyro", gyro);
+		}*/	
 	}
 
 	/**
@@ -81,17 +102,25 @@ public class test_robot extends TimedRobot {
 		
 	}
 
+	double prevRot = 0.0; // true = neg, false = pos
 	/**
 	 * This function is called periodically during operator control.
 	 */
-	
 	@Override
 	public void teleopPeriodic() {
-		spmd = stick.changeSpeed();
 		base.tankDrive(stick.lWheel(), stick.rWheel(), false);
 		hatchmotor.set(ControlMode.PercentOutput, stick.panelArm());
-		cargo.set(ControlMode.PercentOutput, stick.cargoSlope());
-		//System.out.println(stick.cargoSlope());
+		double cargoSlopeSpd = stick.cargoSlope();
+		if(micro.get() && cargoSlopeSpd*prevRot>0.0){
+			cargo.set(ControlMode.PercentOutput, 0);
+		}
+		else{
+			cargo.set(ControlMode.PercentOutput, cargoSlopeSpd);
+			//System.out.println(stick.cargoSlope());
+			if (cargoSlopeSpd!=0.0 && !micro.get()) {
+				prevRot = cargoSlopeSpd;
+			}
+		}
 	}
 	  
 	  public void testInit() {
