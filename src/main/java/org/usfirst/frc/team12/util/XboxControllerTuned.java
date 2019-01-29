@@ -12,11 +12,11 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
     public SpeedMode changeSpeed(){
         if(this.getBumperPressed(Hand.kLeft)){
             if(mode == SpeedMode.FAST) mode = SpeedMode.MED;
-            if(mode == SpeedMode.MED) mode = SpeedMode.SLOW;
+            else if(mode == SpeedMode.MED) mode = SpeedMode.SLOW;
         }
         if(this.getBumperPressed(Hand.kRight)){
             if(mode == SpeedMode.SLOW) mode = SpeedMode.MED;
-            if(mode == SpeedMode.MED) mode = SpeedMode.FAST;
+            else if(mode == SpeedMode.MED) mode = SpeedMode.FAST;
         }
         return mode;
     }

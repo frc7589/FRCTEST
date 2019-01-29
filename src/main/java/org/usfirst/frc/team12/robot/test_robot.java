@@ -105,6 +105,11 @@ public class test_robot extends TimedRobot {
 		spmd = SpeedMode.MED;
 	}
 
+	@Override
+	public void robotPeriodic() {
+		SmartDashboard.putString("SpeedMode", spmd.toString());
+	}
+
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
