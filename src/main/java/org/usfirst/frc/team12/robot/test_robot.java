@@ -11,13 +11,12 @@ import org.usfirst.frc.team12.util.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.kauailabs.navx.frc.AHRS;
+//cimport com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,6 +56,7 @@ public class test_robot extends TimedRobot {
 		cargo = new WPI_VictorSPX(2);
 		spmd = SpeedMode.FAST;
 
+		CameraServer.getInstance().startAutomaticCapture();
 		micro = new DigitalInput(9);
 
 		/*

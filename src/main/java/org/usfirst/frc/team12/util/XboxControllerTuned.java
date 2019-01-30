@@ -37,7 +37,7 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
             left = -this.getY(Hand.kLeft)*0.8;
         }
         else if(mode == SpeedMode.SLOW){
-            left = -this.getY(Hand.kLeft)*0.5;
+            left = -this.getY(Hand.kLeft)*0.6;
         }
 
 		if(Math.abs(left) >= 0.1) {
@@ -58,7 +58,7 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
             right = -this.getY(Hand.kRight)*0.8;
         }
         else if(mode == SpeedMode.SLOW){
-            right = -this.getY(Hand.kRight)*0.5;
+            right = -this.getY(Hand.kRight)*0.6;
         }
 
         if(Math.abs(right) >= 0.1) {
