@@ -6,4 +6,5 @@ public interface IHidRobot2 {
     public double panelArm();
     public double cargoSlope();
     public SpeedMode changeSpeed();
+    public int Camera();
 }

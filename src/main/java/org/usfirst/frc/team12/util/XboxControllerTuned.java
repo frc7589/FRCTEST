@@ -97,5 +97,20 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
         else {
             return 0.0;
         }
+
+
     }
+
+    public int Camera(){
+        boolean val1 = this.getYButton();
+        boolean val2 = this.getXButton();
+        if(val1){
+            return 1;
+        }
+        if(val2){
+            return 2;
+        }
+        return 0;
+    }
+    
 }
