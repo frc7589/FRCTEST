@@ -97,7 +97,10 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
         else {
             return 0.0;
         }
+
+
     }
+<<<<<<< HEAD
     public int steering(){
         if(this.getStartButton()){
             return 1;
@@ -109,4 +112,19 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
             return 0;
         }
     }
+=======
+
+    public int Camera(){
+        boolean val1 = this.getYButton();
+        boolean val2 = this.getXButton();
+        if(val1){
+            return 1;
+        }
+        if(val2){
+            return 2;
+        }
+        return 0;
+    }
+    
+>>>>>>> 705acdb6b99aa8e189bae5c3e366b99f53faba3d
 }

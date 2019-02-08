@@ -30,6 +30,7 @@ public interface IHidRobot2 {
      * @return the changed speed mode
     **/
     public SpeedMode changeSpeed();
+<<<<<<< HEAD
 
     /**
      * @return <ul>
@@ -39,4 +40,7 @@ public interface IHidRobot2 {
      * </ul>
      */
     public int steering();
+=======
+    public int Camera();
+>>>>>>> 705acdb6b99aa8e189bae5c3e366b99f53faba3d
 }

@@ -15,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.Servo;
 
@@ -41,6 +43,9 @@ public class test_robot extends TimedRobot {
 	private SpeedMode spmd;//Speed record for SmartDashBoard
 
 	private DigitalInput micro;
+	private UsbCamera Camera1;
+	private UsbCamera Camera2;
+	private VideoSink server;
 
 	private Servo steer;
 
@@ -69,6 +74,12 @@ public class test_robot extends TimedRobot {
 		//steer = new Servo(8);
 		//steer.set(0.0);
 		svoAngle= 0;
+		micro = new DigitalInput(9);
+
+		Camera1 = CameraServer.getInstance().startAutomaticCapture(0);
+		Camera2 = CameraServer.getInstance().startAutomaticCapture(1);
+		server = CameraServer.getInstance().getServer();
+		
 		/*
 		try{//Gyro
 			gyro = new AHRS(SerialPort.Port.kMXP);
@@ -99,12 +110,27 @@ public class test_robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		
 	}
-	
+
+	/**
+	 * This function is called periodically during operator control.
+	 */
 	@Override
 	public void teleopPeriodic() {
 		base.tankDrive(stick.lWheel(), stick.rWheel(), false);
 		hatchmotor.set(ControlMode.PercentOutput, stick.panelArm());
 		double cargoSlopeSpd = stick.cargoSlope();
+		
+		/*int currCam = stick.Camera();
+		if(currCam==1&&currCam!=preCamera){
+			server.setSource(Camera1);
+			preCamera = currCam;
+		}
+		else if(currCam==2&&currCam!=preCamera){
+			server.setSource(Camera2);
+			preCamera = currCam;
+		}*/
+
+	
 		if(micro.get() && cargoSlopeSpd*prevRot>0.0){
 			cargo.set(ControlMode.PercentOutput, 0);
 		}
@@ -125,6 +151,7 @@ public class test_robot extends TimedRobot {
 
 	@Override
 	public void testInit() {
+		
 	}
 	
 	@Override
