@@ -1,4 +1,4 @@
-package org.usfirst.frc.team12.util;
+/*package org.usfirst.frc.team12.util;
 
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -73,3 +73,4 @@ public class JoystickTuned extends Joystick implements IHidRobot2 {
     }
 
 }
+*/

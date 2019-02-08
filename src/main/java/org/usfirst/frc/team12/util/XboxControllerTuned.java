@@ -98,4 +98,15 @@ public class XboxControllerTuned extends XboxController implements IHidRobot2 {
             return 0.0;
         }
     }
+    public int steering(){
+        if(this.getStartButton()){
+            return 1;
+        }
+        else if(this.getBackButton()){
+            return -1;
+        }
+        else{
+            return 0;
+        }
+    }
 }

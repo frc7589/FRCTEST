@@ -11,12 +11,13 @@ import org.usfirst.frc.team12.util.*;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-//cimport com.kauailabs.navx.frc.AHRS;
+//import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Servo;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,8 +27,10 @@ import edu.wpi.first.wpilibj.CameraServer;
  * project.
  */
 public class test_robot extends TimedRobot {
-	private IHidRobot2 stick;	// XboxControllerTuned or JoystickTuned
-
+	/**
+	 * can be either {@link XboxControllerTuned} or {@link JoystickTuned}
+	 */
+	private IHidRobot2 stick;
 	//Base
 	private WPI_VictorSPX baseLeft,baseRight;
 	private DifferentialDrive base;
@@ -39,11 +42,15 @@ public class test_robot extends TimedRobot {
 
 	private DigitalInput micro;
 
+	private Servo steer;
+
+	private boolean reseter;
+
+	private double prevRot = 0.0; // true = neg, false = pos
+	private double svoAngle;
+
 	//private AHRS gyro;
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
+
 	@Override
 	public void robotInit() {
 		stick = new XboxControllerTuned(0);
@@ -52,13 +59,16 @@ public class test_robot extends TimedRobot {
 		baseRight = new WPI_VictorSPX(5);
 		base = new DifferentialDrive(baseLeft, baseRight);
 
-		hatchmotor = new WPI_VictorSPX(3);
+		hatchmotor = new WPI_VictorSPX(3); 
 		cargo = new WPI_VictorSPX(2);
 		spmd = SpeedMode.FAST;
 
-		CameraServer.getInstance().startAutomaticCapture();
+		//CameraServer.getInstance().startAutomaticCapture();
 		micro = new DigitalInput(9);
 
+		//steer = new Servo(8);
+		//steer.set(0.0);
+		svoAngle= 0;
 		/*
 		try{//Gyro
 			gyro = new AHRS(SerialPort.Port.kMXP);
@@ -73,39 +83,23 @@ public class test_robot extends TimedRobot {
 		spmd = stick.changeSpeed();
 		SmartDashboard.putString("SpeedMode", spmd.toString());
 		SmartDashboard.putBoolean("Micro", micro.get());
+		//svoAngle = SmartDashboard.getNumber("ServoValue", svoAngle);
+		SmartDashboard.putNumber("ServoValue", svoAngle);
 		/*if(gyro != null){
 			SmartDashboard.putBoolean("GyroConnection", gyro.isConnected());
 			SmartDashboard.putData("Gyro", gyro);
 		}*/	
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * <p>You can add additional auto modes by adding additional comparisons to
-	 * the switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
 	@Override
 	public void autonomousInit() {
 	}	
 
-	/**
-	 * This function is called periodically during autonomous.
-	 */
 	@Override
 	public void autonomousPeriodic() {
 		
 	}
-
-	double prevRot = 0.0; // true = neg, false = pos
-	/**
-	 * This function is called periodically during operator control.
-	 */
+	
 	@Override
 	public void teleopPeriodic() {
 		base.tankDrive(stick.lWheel(), stick.rWheel(), false);
@@ -121,15 +115,20 @@ public class test_robot extends TimedRobot {
 				prevRot = cargoSlopeSpd;
 			}
 		}
+
+		//set angle offset from stick
+		//System.out.println(steer.get());
+		//svoAngle = Math.max(0.0 , Math.min(1.0, steer.get() + stick.steering() * 0.002 ) ); // prevent angle out of bound
+		//System.out.println(angle);
+		/*if (Math.abs(svoAngle-steer.get())>1.0/50)*/ steer.set(svoAngle);
 	}
-	  
-	  public void testInit() {
-	  }
+
+	@Override
+	public void testInit() {
+	}
 	
-	/**
-	 * This function is called periodically during test mode.
-	 */
 	@Override
 	public void testPeriodic() {
+		
 	}
 }
